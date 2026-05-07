@@ -350,13 +350,22 @@
       transform: translateY(-1px);
     }
     .btn-ghost {
-      background: transparent;
+      background: rgba(13,10,8,0.55);
+      backdrop-filter: blur(10px) saturate(140%);
+      -webkit-backdrop-filter: blur(10px) saturate(140%);
       color: var(--ink);
-      border-color: var(--line-strong);
+      border-color: rgba(244,235,222,0.55);
+      box-shadow:
+        0 6px 20px rgba(0,0,0,0.4),
+        inset 0 0 0 1px rgba(255,255,255,0.04);
     }
     .btn-ghost:hover {
-      border-color: var(--ink-mute);
-      background: rgba(244,235,222,0.04);
+      border-color: var(--amber);
+      color: var(--amber);
+      background: rgba(13,10,8,0.7);
+      box-shadow:
+        0 8px 26px rgba(0,0,0,0.5),
+        0 0 0 4px rgba(232,150,87,0.12);
     }
 
     /* Hero image stack */
@@ -879,18 +888,18 @@
     }
     .stat-num .unit { font-size: 0.5em; opacity: 0.7; font-style: normal; margin-left: 2px; }
     .stat-label {
-      margin-top: 8px;
+      margin-top: 10px;
       font-family: var(--font-mono);
-      font-size: 11px;
+      font-size: 13px;
       letter-spacing: 0.13em;
       text-transform: uppercase;
-      color: var(--ink-soft);
+      color: var(--ink-mute);
     }
     .stat-sub {
-      margin-top: 4px;
-      font-size: 13px;
+      margin-top: 6px;
+      font-size: 15.5px;
       color: var(--ink-mute);
-      line-height: 1.4;
+      line-height: 1.5;
     }
 
     /* Method timeline / steps */
@@ -1078,13 +1087,9 @@
               <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2c-3.2.7-3.87-1.36-3.87-1.36-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.24 3.34.95.1-.74.4-1.24.72-1.53-2.55-.29-5.24-1.27-5.24-5.66 0-1.25.45-2.27 1.18-3.07-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.15 1.17.91-.25 1.89-.38 2.86-.38.97 0 1.95.13 2.86.38 2.18-1.48 3.14-1.17 3.14-1.17.62 1.58.23 2.75.11 3.04.74.8 1.18 1.82 1.18 3.07 0 4.4-2.69 5.36-5.25 5.65.41.35.78 1.05.78 2.12v3.14c0 .31.21.67.8.56 4.56-1.52 7.85-5.83 7.85-10.91C23.5 5.65 18.35.5 12 .5z"/></svg>
               Code
             </a>
-            <a class="btn btn-ghost" href="#abstract">
+            <a class="btn btn-ghost" href="https://arxiv.org/abs/2601.23167" target="_blank" rel="noopener">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg>
               Paper
-            </a>
-            <a class="btn btn-ghost" href="https://github.com/lxrswdd/Hi-Light" target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-              Demo
             </a>
           </div>
         </div>
@@ -1211,7 +1216,7 @@
       <div class="section-head reveal">
         <div class="section-num">§ 03 / Method</div>
         <div>
-          <h2 class="section-title">Three modules, <span class="em">one</span> coherent pipeline.</h2>
+          <h2 class="section-title">Three <span class="em">modules</span></h2>
           <p class="section-lede">Hi-Light decouples the problem: generate stable lighting on a downsampled latent, then project it back onto the high-resolution source. Each module surgically targets one failure mode of existing SOTA.</p>
         </div>
       </div>
@@ -1445,9 +1450,20 @@
 
     var lastEntranceMs = (initial + Math.max(0, i - 1) * stagger + entranceDur + holdAfter) * 1000;
 
+    var sweepDurMs = (Math.max(0, i - 1) * colorStagger + 1.3) * 1000;
+    var gapBetweenSweepsMs = 700;
+
     function start() {
       bq.classList.add('play');
-      setTimeout(function () { bq.classList.add('shine'); }, lastEntranceMs);
+      setTimeout(function () {
+        bq.classList.add('shine');
+        setInterval(function () {
+          bq.classList.remove('shine');
+          /* eslint-disable no-unused-expressions */
+          void bq.offsetWidth; // force reflow so the animation restarts
+          bq.classList.add('shine');
+        }, sweepDurMs + gapBetweenSweepsMs);
+      }, lastEntranceMs);
     }
 
     if ('IntersectionObserver' in window) {
