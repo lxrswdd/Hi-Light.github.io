@@ -52,6 +52,16 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* Custom cursor — must be ≤32×32 for cross-browser support
+       (Firefox caps at 32; Chrome/Safari accept larger but render small).
+       Falls back to default arrow if the asset can't load. */
+    html, body {
+      cursor: url('assets/cursor1_16.png') 2 2, auto;
+    }
+    a, button, [role="button"], .copy-btn, .btn, label {
+      cursor: url('assets/cursor1_16.png') 2 2, pointer;
+    }
+
     html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; scroll-padding-top: 70px; }
     body {
       font-family: var(--font-sans);
