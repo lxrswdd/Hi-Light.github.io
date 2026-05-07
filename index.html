@@ -552,16 +552,34 @@
       flex-direction: column;
       align-items: center;
       gap: 8px;
-      color: var(--ink);                          /* white */
+      color: #b8ffb0;                             /* glowing green */
       font-family: var(--font-mono);
       font-size: 18px;
       font-weight: 600;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       white-space: nowrap;
-      animation: hintBounceY 1.4s ease-in-out infinite;
-      filter: drop-shadow(0 0 10px rgba(244,235,222,0.6));
+      animation: hintBounceY 1.4s ease-in-out infinite,
+                 hintGreenPulse 2.4s ease-in-out infinite;
+      filter:
+        drop-shadow(0 0 6px rgba(140,255,140,0.95))
+        drop-shadow(0 0 18px rgba(80,230,110,0.7))
+        drop-shadow(0 0 38px rgba(60,200,90,0.45));
       pointer-events: none;
+    }
+    @keyframes hintGreenPulse {
+      0%, 100% {
+        filter:
+          drop-shadow(0 0 6px rgba(140,255,140,0.95))
+          drop-shadow(0 0 18px rgba(80,230,110,0.7))
+          drop-shadow(0 0 38px rgba(60,200,90,0.45));
+      }
+      50% {
+        filter:
+          drop-shadow(0 0 9px rgba(180,255,180,1))
+          drop-shadow(0 0 26px rgba(110,250,140,0.85))
+          drop-shadow(0 0 56px rgba(80,220,100,0.6));
+      }
     }
     .hint-arrow svg {
       width: 42px; height: 42px;
