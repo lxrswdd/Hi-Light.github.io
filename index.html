@@ -482,7 +482,7 @@
     /* Quote strip beneath hero */
     .quote-strip {
       position: relative;
-      padding: 70px 0 28px;
+      padding: 70px 0 50px;
       border-bottom: 1px solid var(--line);
       background: transparent;
       overflow: hidden;
@@ -492,12 +492,8 @@
       width: 100%;
       padding: 0 max(20px, 4vw);
       text-align: center;
-      overflow-x: auto;
-      overflow-y: hidden;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
+      overflow: visible;        /* allow the hint arrow below the blockquote to render */
     }
-    .quote-line::-webkit-scrollbar { display: none; }
 
     .quote-strip blockquote {
       position: relative;
@@ -543,35 +539,41 @@
     .quote-cite .lit { color: var(--ink-mute); }
     .quote-cite .lit::before { content: "— "; color: var(--amber); }
 
-    /* Hint arrow — small red marker beside the quote that nudges the user
-       to drag their wand across the line to reveal the hidden words. */
+    /* Hint arrow — small white marker positioned BELOW the first word of the
+       quote, pointing UP toward it. Sits inside the blockquote (which is
+       position: relative + inline-block), so left:0 lines up with the first
+       glyph regardless of viewport width. */
     .hint-arrow {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 16px;
       display: inline-flex;
+      flex-direction: column;
       align-items: center;
-      gap: 10px;
-      vertical-align: middle;
-      margin-right: 20px;
-      color: #d94a3a;
+      gap: 8px;
+      color: var(--ink);                          /* white */
       font-family: var(--font-mono);
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 600;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       white-space: nowrap;
-      animation: hintBounce 1.4s ease-in-out infinite;
-      filter: drop-shadow(0 0 8px rgba(217,74,58,0.6));
+      animation: hintBounceY 1.4s ease-in-out infinite;
+      filter: drop-shadow(0 0 10px rgba(244,235,222,0.6));
+      pointer-events: none;
     }
     .hint-arrow svg {
-      width: 30px; height: 30px;
+      width: 42px; height: 42px;
       stroke: currentColor;
       fill: none;
       stroke-width: 2.2;
       stroke-linecap: round;
       stroke-linejoin: round;
     }
-    @keyframes hintBounce {
-      0%, 100% { transform: translateX(0);   opacity: 0.85; }
-      50%      { transform: translateX(10px); opacity: 1; }
+    @keyframes hintBounceY {
+      0%, 100% { transform: translateY(0);    opacity: 0.85; }
+      50%      { transform: translateY(-8px); opacity: 1; }
     }
     @media (prefers-reduced-motion: reduce) {
       .hint-arrow { animation: none; }
@@ -599,7 +601,7 @@
 
     .quote-cite {
       display: block;
-      margin-top: 8px;
+      margin-top: 90px;        /* leaves room for the absolutely-positioned hint */
       padding: 0 max(20px, 4vw);
       text-align: center;
       font-family: var(--font-mono);
@@ -1183,13 +1185,13 @@
   <!-- ================== QUOTE ================== -->
   <div class="quote-strip">
     <div class="quote-line reveal">
-      <span class="hint-arrow" aria-hidden="true">
-        <span>Unveil the Magic</span>
-        <svg viewBox="0 0 24 24"><path d="M4 12 H20 M14 6 L20 12 L14 18"/></svg>
-      </span>
       <blockquote>
         <span class="dark"><span class="openq">“</span>Lighting is the blank page. It's the canvas. It's the thing that you start with — you can't do anything until you have a light.<span class="closeq">”</span></span>
         <span class="lit" aria-hidden="true"><span class="openq">“</span>Lighting is the blank page. It's the canvas. It's the thing that you start with — you can't do anything until you have a light.<span class="closeq">”</span></span>
+        <span class="hint-arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 4 L 12 20 M6 10 L 12 4 L 18 10"/></svg>
+          <span>Unveil the Magic</span>
+        </span>
       </blockquote>
     </div>
     <cite class="quote-cite reveal">
