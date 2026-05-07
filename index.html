@@ -1,553 +1,1407 @@
 <!doctype html>
 <html lang="en">
-
 <head>
-    <title>Hi-Light: A Path to high-fidelity, high-resolution video relighting with a Novel Evaluation Paradigm</title>
-    <link rel="icon" type="image/x-icon" href="/static/img/icons/cupid.png">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Hi-Light — High-fidelity, High-resolution Video Relighting</title>
+  <meta name="description" content="A novel, plug-and-play, training-free framework for high-fidelity, high-resolution, robust video relighting. CVPR 2026." />
+  <meta name="theme-color" content="#0d0a08" />
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Open Graph -->
+  <meta property="og:title" content="Hi-Light — High-fidelity Video Relighting" />
+  <meta property="og:description" content="A path to high-fidelity, high-resolution video relighting with a refined evaluation paradigm." />
+  <meta property="og:image" content="assets/fig1_teaser.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
 
-    <!-- Open Graph -->
-    <meta property="og:url" content="https://cupid3d.github.io" />
-    <meta property="og:image" content="https://cupid3d.github.io/static/img/Cupid.png" />
-    <meta property="og:title" content="Hi-Light: A Path to high-fidelity, high-resolution video relighting with a Novel Evaluation Paradigm" />
-    <meta property="og:description"
-        content="A first high-resolution video relighting model." />
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-    <!-- Twitter -->
-    <meta name="twitter:url" content="https://cupid3d.github.io/" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://cupid3d.github.io/static/img/Cupid.png" />
-    <meta name="twitter:title" content="Cupid: Generative 3D Reconstruction via Joint Object and Pose Modeling" />
-    <meta name="twitter:description"
-        content="A new generation-based 3D reconstruction method that accurately infers the camera pose, 3D shape, and texture of an object from a single 2D image." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230d0a08'/%3E%3Ccircle cx='16' cy='16' r='8' fill='%23e89657'/%3E%3C/svg%3E" />
 
-    <script src="./static/js/distill_template.v2.js"></script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    
-    <!-- MathJax Configuration -->
-    <script>
-        window.MathJax = {
-          tex: {
-            inlineMath: [['$', '$'], ['\\(', '\\)']],
-            displayMath: [['$$', '$$'], ['\\[', '\\]']],
-            processEscapes: true,
-            processEnvironments: true,
-            tags: 'ams',
-            macros: {
-              argmin: '\\operatorname*{arg\\,min}',
-              argmax: '\\operatorname*{arg\\,max}'
-            }
-          },
-          options: {
-            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
-          }
-        };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #0d0a08;
+      --bg-elev: #15110d;
+      --bg-card: #1a1410;
+      --line: #2a221c;
+      --line-strong: #3a2e25;
 
-    <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="https://d3js.org/d3-collection.v1.min.js"></script>
-    <script src="https://rawgit.com/nstrayer/slid3r/master/dist/slid3r.js"></script>
+      --ink: #f4ebde;
+      --ink-mute: #c9bba6;
+      --ink-soft: #908271;
+      --ink-faint: #5a5045;
 
-    <script defer="" src="./static/js/hider.js"></script>
-    <script src="./static/js/image_interact.js"></script>
-    <script src="./static/js/switch_videos.js"></script>
+      --amber: #e89657;        /* sunset accent */
+      --amber-glow: #f5b471;
+      --amber-deep: #b06a37;
+      --teal: #5a8d8f;         /* paper diagram secondary */
+      --rust: #c14b34;
 
-    <link rel="stylesheet" href="./static/css/style.css">
-    <link rel="stylesheet" href="./static/css/rerun-viewer.css">
-    <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+      --font-display: 'Fraunces', 'Iowan Old Style', 'Times New Roman', serif;
+      --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
-    <script defer src="./static/js/fontawesome.all.min.js"></script>
+      --maxw: 1240px;
+      --gutter: clamp(20px, 4vw, 56px);
+      --r-sm: 4px;
+      --r-md: 10px;
+      --r-lg: 18px;
+    }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <!-- medium zoom https://github.com/francoischalifour/medium-zoom -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script> <!-- jquery -->
-    <script defer src="./static/js/medium-zoom.min.js"></script>
-    <script defer src="./static/js/zoom.js"></script>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RY5G0G0QKD"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-    
-      gtag('config', 'G-RY5G0G0QKD');
-    </script>
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; scroll-padding-top: 70px; }
+    body {
+      font-family: var(--font-sans);
+      font-size: 17px;
+      line-height: 1.55;
+      color: var(--ink);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+      font-feature-settings: "ss01", "cv11";
+    }
+
+    /* Atmospheric warm glow background */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 60% at 80% 0%, rgba(232, 150, 87, 0.10), transparent 60%),
+        radial-gradient(ellipse 60% 40% at 0% 30%, rgba(193, 75, 52, 0.06), transparent 60%),
+        radial-gradient(ellipse 50% 80% at 50% 100%, rgba(90, 141, 143, 0.05), transparent 60%);
+      z-index: 0;
+    }
+
+    /* Subtle grain */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -1px;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.3  0 0 0 0 0.25  0 0 0 0 0.2  0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.5'/></svg>");
+      opacity: 0.08;
+      mix-blend-mode: overlay;
+      z-index: 1;
+    }
+
+    .wrap { position: relative; z-index: 2; }
+
+    .container {
+      width: 100%;
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; height: auto; }
+
+    /* ===== Top nav ===== */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      background: rgba(13, 10, 8, 0.7);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      gap: 20px;
+    }
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-style: italic;
+      font-size: 20px;
+      letter-spacing: -0.01em;
+    }
+    .brand-venue {
+      padding: 4px 10px;
+      border: 1px solid var(--amber);
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--amber);
+      white-space: nowrap;
+    }
+    @media (max-width: 560px) {
+      .brand-venue { display: none; }
+    }
+    .brand-dot {
+      width: 10px; height: 10px;
+      border-radius: 999px;
+      background: var(--amber);
+      box-shadow: 0 0 14px var(--amber), 0 0 28px rgba(232,150,87,0.4);
+    }
+    .nav-links {
+      display: flex; gap: 28px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-mute);
+    }
+    .nav-links a { transition: color .2s; }
+    .nav-links a:hover { color: var(--amber); }
+    @media (max-width: 820px) {
+      .nav-links { display: none; }
+    }
+
+    /* ===== TOP PANE (hero + quote share a fading bg image) ===== */
+    .top-pane {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+    }
+    .top-pane::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url('assets/bg2.png');
+      background-size: 100% auto;
+      background-position: left top;
+      background-repeat: no-repeat;
+      background-color: var(--bg);
+      z-index: -2;
+      pointer-events: none;
+      /* fade the image out gradually so it dissolves into the page
+         around / through the quote section */
+      -webkit-mask-image: linear-gradient(180deg,
+        #000 0%,
+        #000 65%,
+        rgba(0,0,0,0.6) 85%,
+        rgba(0,0,0,0) 100%);
+              mask-image: linear-gradient(180deg,
+        #000 0%,
+        #000 65%,
+        rgba(0,0,0,0.6) 85%,
+        rgba(0,0,0,0) 100%);
+    }
+    .top-pane::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 55% at 30% 40%, rgba(13,10,8,0.55), transparent 70%),
+        linear-gradient(180deg, rgba(13,10,8,0.10) 0%, rgba(13,10,8,0.20) 60%, transparent 100%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative;
+      padding: clamp(60px, 10vw, 120px) 0 clamp(80px, 10vw, 140px);
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 60px;
+      align-items: end;
+    }
+    @media (min-width: 1000px) {
+      .hero-grid { grid-template-columns: 1.1fr 0.9fr; gap: 80px; align-items: center; }
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 28px;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 28px; height: 1px;
+      background: var(--amber);
+    }
+
+    h1.title {
+      font-family: var(--font-display);
+      font-weight: 350;
+      font-size: clamp(48px, 9vw, 120px);
+      line-height: 0.95;
+      letter-spacing: -0.035em;
+      color: var(--ink-mute);
+      font-variation-settings: "opsz" 144, "SOFT" 30;
+    }
+    h1.title .em {
+      font-style: italic;
+      font-weight: 300;
+      color: var(--amber);
+      font-variation-settings: "opsz" 144, "SOFT" 100;
+      display: inline-block;
+      will-change: opacity;
+      animation: breathe 3s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      h1.title .em { animation: none; }
+    }
+    h1.title .small {
+      display: block;
+      font-size: clamp(19px, 2.1vw, 26px);
+      line-height: 1.5;
+      font-style: italic;
+      font-weight: 350;
+      color: var(--ink-mute);
+      letter-spacing: 0;
+      margin-top: 28px;
+      max-width: 36ch;
+      font-variation-settings: "opsz" 36;
+    }
+
+    .authors {
+      margin-top: 36px;
+      font-family: var(--font-sans);
+      font-size: 17px;
+      color: var(--ink-mute);
+      letter-spacing: 0.005em;
+      text-shadow:
+        0 1px 2px rgba(0,0,0,0.85),
+        0 0 18px rgba(13,10,8,0.7);
+    }
+    .authors .au {
+      color: var(--ink);
+      text-shadow:
+        0 1px 2px rgba(0,0,0,0.9),
+        0 0 22px rgba(13,10,8,0.8);
+    }
+    .authors sup { color: var(--amber); font-size: 0.7em; padding: 0 1px; }
+    .affil {
+      margin-top: 8px;
+      font-size: 14px;
+      color: var(--ink-mute);
+      text-shadow:
+        0 1px 2px rgba(0,0,0,0.85),
+        0 0 18px rgba(13,10,8,0.7);
+    }
+    .affil sup { color: var(--amber); }
+    .venue {
+      display: inline-block;
+      margin-top: 18px;
+      padding: 5px 12px;
+      border: 1px solid var(--amber);
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--amber);
+    }
+
+    .actions {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      margin-top: 40px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 22px;
+      border-radius: 999px;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: all .25s cubic-bezier(.2,.7,.2,1);
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .btn svg { width: 16px; height: 16px; }
+    .btn-primary {
+      background: var(--amber);
+      color: #1a1006;
+      border-color: var(--amber);
+    }
+    .btn-primary:hover {
+      background: var(--amber-glow);
+      box-shadow: 0 8px 30px rgba(232,150,87,0.35), 0 0 0 4px rgba(232,150,87,0.15);
+      transform: translateY(-1px);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink);
+      border-color: var(--line-strong);
+    }
+    .btn-ghost:hover {
+      border-color: var(--ink-mute);
+      background: rgba(244,235,222,0.04);
+    }
+
+    /* Hero image stack */
+    .hero-visual {
+      position: relative;
+      width: 100%;
+    }
+    .hero-visual::before {
+      content: "";
+      position: absolute;
+      inset: -40px;
+      background: radial-gradient(ellipse at center, rgba(232,150,87,0.18), transparent 60%);
+      filter: blur(40px);
+      z-index: 0;
+    }
+    .hero-img-frame {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      border-radius: var(--r-md);
+      overflow: hidden;
+      box-shadow:
+        0 30px 80px rgba(0,0,0,0.6),
+        0 0 0 1px var(--line-strong);
+    }
+    .hero-img-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .hero-caption {
+      position: absolute;
+      bottom: -18px;
+      left: 18px;
+      z-index: 2;
+      padding: 10px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--r-md);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-mute);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+    }
+    .hero-caption .accent { color: var(--amber); }
+
+    /* Quote strip beneath hero */
+    .quote-strip {
+      position: relative;
+      padding: 22px 0 18px;
+      border-bottom: 1px solid var(--line);
+      background: transparent;
+      overflow: hidden;
+    }
+    .quote-line {
+      position: relative;
+      width: 100%;
+      padding: 0 max(20px, 4vw);
+      text-align: center;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .quote-line::-webkit-scrollbar { display: none; }
+
+    .quote-strip blockquote {
+      display: inline-block;
+      white-space: nowrap;
+      font-family: var(--font-display);
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(11px, 1.45vw, 22px);
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      font-variation-settings: "opsz" 36;
+    }
+    .quote-strip blockquote .openq,
+    .quote-strip blockquote .closeq {
+      display: inline-block;
+      transform: translateY(0.18em);
+      font-size: 1.6em;
+      line-height: 0;
+      color: var(--amber);
+      opacity: 0;
+      font-style: normal;
+      transition: opacity .9s ease-out;
+      transition-delay: var(--d, 0s);
+    }
+    .quote-strip blockquote.play .openq,
+    .quote-strip blockquote.play .closeq { opacity: 0.55; }
+    .quote-strip blockquote .openq { margin-right: 0.18em; }
+    .quote-strip blockquote .closeq { margin-left: 0.08em; }
+
+    /* per-word reveal animation + secondary color cascade */
+    .quote-strip blockquote .word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(0.35em);
+      transition:
+        opacity .85s ease-out var(--d, 0s),
+        transform 1s cubic-bezier(.2,.7,.2,1) var(--d, 0s),
+        color .9s ease-out var(--cd, 0s);
+      will-change: opacity, transform, color;
+    }
+    .quote-strip blockquote.play .word {
+      opacity: 1;
+      transform: none;
+    }
+    .quote-strip blockquote.shine .word {
+      color: var(--amber);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .quote-strip blockquote .word,
+      .quote-strip blockquote .openq,
+      .quote-strip blockquote .closeq {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+      .quote-strip blockquote .openq,
+      .quote-strip blockquote .closeq { opacity: 0.55; }
+    }
+
+    .quote-cite {
+      display: block;
+      margin-top: 8px;
+      padding: 0 max(20px, 4vw);
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-mute);
+      font-style: normal;
+    }
+    .quote-cite::before {
+      content: "— ";
+      color: var(--amber);
+    }
+
+    /* ===== Sections ===== */
+    section.block {
+      padding: clamp(70px, 9vw, 130px) 0;
+      position: relative;
+    }
+    .section-head {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-bottom: 56px;
+    }
+    @media (min-width: 900px) {
+      .section-head { grid-template-columns: 220px 1fr; gap: 60px; align-items: baseline; }
+    }
+    .section-num {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--amber);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .section-num::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--amber), transparent);
+      max-width: 120px;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-weight: 350;
+      font-size: clamp(36px, 5vw, 60px);
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      color: var(--ink);
+      font-variation-settings: "opsz" 72;
+    }
+    .section-title .em {
+      font-style: italic;
+      color: var(--amber);
+      font-weight: 300;
+    }
+    .section-lede {
+      grid-column: 2 / -1;
+      margin-top: 16px;
+      max-width: 720px;
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--ink-mute);
+    }
+
+    /* Abstract */
+    .abstract-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    @media (min-width: 900px) {
+      .abstract-grid { grid-template-columns: 220px 1fr; gap: 60px; }
+    }
+    .abstract-aside {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+    .abstract-aside .label { color: var(--amber); display: block; margin-bottom: 6px; }
+    .abstract-aside p { margin-bottom: 18px; line-height: 1.7; color: var(--ink-mute); }
+    .abstract-body {
+      font-family: var(--font-display);
+      font-size: clamp(19px, 1.7vw, 23px);
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+      color: var(--ink);
+      font-weight: 350;
+      font-variation-settings: "opsz" 36;
+      max-width: 75ch;
+    }
+    .abstract-body p + p { margin-top: 1em; }
+    .abstract-body strong {
+      color: var(--amber);
+      font-weight: 500;
+      font-style: italic;
+    }
+
+    /* Figure cards */
+    .figure {
+      margin: 0;
+    }
+    .figure-frame {
+      position: relative;
+      border-radius: var(--r-md);
+      overflow: hidden;
+      background: var(--bg-card);
+      border: 1px solid var(--line-strong);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    .figure-frame img { width: 100%; height: auto; display: block; }
+    figcaption {
+      margin-top: 18px;
+      font-size: 17px;
+      line-height: 1.6;
+      color: var(--ink-mute);
+      font-style: italic;
+      font-family: var(--font-display);
+      font-variation-settings: "opsz" 24;
+      letter-spacing: 0.005em;
+    }
+    figcaption .fignum {
+      font-family: var(--font-mono);
+      font-style: normal;
+      color: var(--amber);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 13px;
+      font-weight: 600;
+      margin-right: 12px;
+    }
+
+    /* Contributions grid */
+    .contrib-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+    @media (min-width: 760px) { .contrib-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .contrib-card {
+      position: relative;
+      padding: 32px 28px 32px;
+      background: linear-gradient(180deg, var(--bg-card), var(--bg-elev));
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      transition: border-color .3s, transform .3s;
+    }
+    .contrib-card:hover {
+      border-color: var(--amber-deep);
+      transform: translateY(-3px);
+    }
+    .contrib-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--amber) 50%, transparent);
+      opacity: 0.5;
+    }
+    .contrib-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--amber);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .contrib-num .dot {
+      width: 6px; height: 6px;
+      border-radius: 999px;
+      background: var(--amber);
+      box-shadow: 0 0 10px var(--amber);
+    }
+    .contrib-name {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+      margin-bottom: 12px;
+      font-variation-settings: "opsz" 36;
+    }
+    .contrib-name .em {
+      font-style: italic;
+      color: var(--amber);
+      font-weight: 300;
+    }
+    .contrib-text {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--ink-mute);
+    }
+    .contrib-text code {
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      background: rgba(232,150,87,0.08);
+      color: var(--amber);
+      padding: 1px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.01em;
+    }
+
+    /* Results table */
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--r-md);
+      background: var(--bg-card);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 640px;
+    }
+    th, td {
+      padding: 16px 20px;
+      text-align: left;
+      font-size: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    th {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      font-weight: 500;
+      background: var(--bg-elev);
+    }
+    td {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--ink-mute);
+    }
+    td.label {
+      font-family: var(--font-sans);
+      font-size: 15px;
+      color: var(--ink);
+      font-weight: 500;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tr.best {
+      background: linear-gradient(90deg, rgba(232,150,87,0.08), transparent);
+    }
+    tr.best td { color: var(--ink); font-weight: 600; }
+    tr.best td.label { color: var(--amber); }
+    tr.best td .winner-mark {
+      display: inline-block;
+      margin-left: 6px;
+      color: var(--amber);
+      font-size: 10px;
+      vertical-align: middle;
+    }
+
+    .table-foot {
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--ink-soft);
+      font-style: italic;
+    }
+
+    /* Two-column results */
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 30px;
+      align-items: start;
+    }
+    @media (min-width: 1000px) {
+      .results-grid { grid-template-columns: 1.4fr 1fr; gap: 50px; }
+    }
+
+    /* Stats highlight row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 40px;
+    }
+    @media (min-width: 700px) { .stats-row { grid-template-columns: repeat(4, 1fr); } }
+
+    .stat {
+      padding: 24px 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      background: linear-gradient(180deg, var(--bg-card), var(--bg-elev));
+    }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 5vw, 52px);
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: var(--amber);
+      font-variation-settings: "opsz" 72;
+      font-style: italic;
+    }
+    .stat-num .unit { font-size: 0.5em; opacity: 0.7; font-style: normal; margin-left: 2px; }
+    .stat-label {
+      margin-top: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+    .stat-sub {
+      margin-top: 4px;
+      font-size: 13px;
+      color: var(--ink-mute);
+      line-height: 1.4;
+    }
+
+    /* Method timeline / steps */
+    .steps {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-top: 40px;
+    }
+    @media (min-width: 800px) { .steps { grid-template-columns: repeat(3, 1fr); gap: 0; } }
+    .step {
+      position: relative;
+      padding: 28px 24px;
+      border-top: 1px solid var(--line-strong);
+    }
+    @media (min-width: 800px) {
+      .step { border-top: none; border-left: 1px solid var(--line-strong); padding: 4px 28px 8px; }
+      .step:first-child { border-left: none; padding-left: 0; }
+    }
+    .step-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 10px;
+    }
+    .step h4 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: 22px;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+      margin-bottom: 10px;
+      font-variation-settings: "opsz" 36;
+    }
+    .step p {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--ink-mute);
+    }
+
+    /* BibTeX */
+    .bibtex {
+      position: relative;
+      padding: 28px 28px 28px;
+      background: var(--bg-card);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--r-md);
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: var(--ink-mute);
+      white-space: pre;
+      overflow-x: auto;
+    }
+    .bibtex .key { color: var(--amber); }
+    .bibtex .field { color: var(--teal); }
+    .bibtex .val { color: var(--ink); }
+
+    .copy-btn {
+      position: absolute;
+      top: 16px; right: 16px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--bg-elev);
+      border: 1px solid var(--line-strong);
+      color: var(--ink-mute);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .copy-btn:hover {
+      color: var(--amber);
+      border-color: var(--amber);
+    }
+    .copy-btn.done { color: var(--amber); border-color: var(--amber); }
+
+    /* Footer */
+    footer {
+      padding: 60px 0 40px;
+      border-top: 1px solid var(--line);
+      margin-top: 40px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 30px;
+      align-items: end;
+    }
+    @media (min-width: 700px) { .footer-grid { grid-template-columns: 1fr auto; } }
+
+    .footer-note {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+    .footer-note a { color: var(--ink-mute); border-bottom: 1px dashed var(--line-strong); }
+    .footer-note a:hover { color: var(--amber); border-color: var(--amber); }
+    .footer-mark {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 13px;
+      color: var(--ink-faint);
+      letter-spacing: 0.02em;
+    }
+
+    /* Reveal on scroll */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .9s ease-out, transform .9s ease-out; }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+    }
+
+    /* Selection */
+    ::selection { background: var(--amber); color: #1a1006; }
+
+    /* Scrollbar polish */
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--amber-deep); }
+
+    /* Light dot animation in nav */
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 14px var(--amber), 0 0 28px rgba(232,150,87,0.4); }
+      50% { box-shadow: 0 0 22px var(--amber), 0 0 40px rgba(232,150,87,0.55); }
+    }
+    .brand-dot { animation: pulse 3.6s ease-in-out infinite; }
+
+  </style>
 </head>
-
 <body>
-    <!-- Navigation Bar -->
-    <!-- <nav id="nav-bar" class="nav-bar">
-        <a href="#sec:method" class="nav-link">Method</a>
-        <a href="#sec:interactive_demo" class="nav-link">Demo</a>
-    </nav> -->
+<div class="wrap">
 
-    <div class="header-wrapper">
-        <div class="header-container" id="header-container">
-            <div class="header-content">
-                <h1 style="margin-top: 0px">Cupid</h1>
-                <h2>Generative 3D Reconstruction
-                     via Joint Object and Pose Modeling</h2>
-                <p>
-                    Introducing Cupid, a 3D generator that accurately infers the
-                    camera pose, 3D shape, and texture from a single image.
-                </p>
-
-                <div class="icon-container">
-                    <div class="icon-item">
-                        <img src="./static/img/icons/formula.svg" alt="Visual Representation Icon">
-                        <div><strong>Novel Generative Formulation</strong>: We reframe 3D reconstruction by jointly
-                            synthesizing the object and its camera pose. This grounds the generation process, creating
-                            an explicit link between the 3D output and the 2D input view.
-                        </div>
-                    </div>
-                    <div class="icon-item">
-                        <img src="./static/img/icons/camera.svg" alt="Connector Design Icon">
-                        <div><strong>Pose-Conditioned Architecture</strong>: We design a generator with a pose-aligned
-                            conditioner. This novel mechanism directly injects <em>pixel information</em> into the
-                            synthesis
-                            process to prevent color drift and ensure textural fidelity.
-                        </div>
-                    </div>
-                    <div class="icon-item">
-                        <img src="./static/img/icons/cube.svg" alt="Instruction Tuning Data Icon">
-                        <div><strong>Unified and Versatile Model</strong>: Our approach is a unified, versatile model
-                            that
-                            excels at diverse 3D synthesis tasks, including <em>single image reconstruction</em>, <em>scene
-                                generation</em>, and <em>multi-view reconstruction</em>, without task-specific tuning.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="button-container">
-                    <!-- replace arxiv -->
-                    <a href="https://arxiv.org/abs/2510.20776" class="button paper-link" target="_blank">
-                        <span class="icon is-small">
-                            <i class="ai ai-arxiv"></i>
-                        </span>
-                        arXiv
-                    </a>
-                    <!-- replace pdf -->
-                    <a href="./cupid_paper.pdf" class="button paper-link" target="_blank">
-                        <span class="icon is-small">
-                            <i class="fas fa-file-pdf"></i>
-                        </span>
-                        <span>pdf</span>
-                    </a>
-                    <!-- replace image -->
-                    <!-- <a class="button" aria-disabled="true" tabindex="-1" style="pointer-events: none; opacity: 0.6;"> -->
-                    <a href="https://github.com/cupid3d/Cupid" class="button paper-link" target="_blank">
-                        <span class="icon is-small">
-                            <i class="fab fa-github"></i>
-                        </span>
-                        <span>Code</span>
-                    </a>
-                    <!-- YouTube teaser button -->
-                    <a href="https://youtu.be/S7Bqwg_q4W0" class="button paper-link" target="_blank" rel="noopener noreferrer" aria-label="Watch teaser on YouTube">
-                        <span class="icon is-small">
-                            <i class="fab fa-youtube"></i>
-                        </span>
-                        <span>Video</span>
-                    </a>
-                    
-                    <br>
-                </div>
-            </div>
-            <!-- header image (intentionally left blank; teaser video placed above Abstract) -->
-            <div class="header-image">
-                <img draggable="false" src="static/img/Cupid.png" alt="Teaser Image" class="teaser-image">
-            </div>
-        </div>
+  <!-- ================== NAV ================== -->
+  <nav class="nav">
+    <div class="container nav-inner">
+      <div class="brand-group">
+        <a href="#top" class="brand">
+          <span class="brand-dot"></span>
+          Hi-Light
+        </a>
+        <span class="brand-venue">CVEU @ CVPR 2026</span>
+      </div>
+      <div class="nav-links">
+        <a href="#abstract">Abstract</a>
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+        <a href="#cite">Cite</a>
+        <a href="https://github.com/lxrswdd/Hi-Light" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
     </div>
-    <d-article>
-        <!-- for author information -->
-        <div class="byline">
-            <div class="byline-container">
-                <div class="byline-column" style="line-height: 1.2;">
-                    <h3 style="font-size: 1.2em; margin-bottom: 0.2em;">Authors</h3>
-                    <p style="margin: 0;">
-                        <a href="https://github.com/hbb1", class="author-link" style="font-size: 0.9em;">Binbin Huang</a>
-                        <sup style="font-size: 0.9em;">1,2,†</sup>
-                    </p>
-                    <p style="margin: 0;">
-                        <a href="https://scholar.google.com/citations?user=LTzbpW8AAAAJ&hl=zh-CN" class="author-link" style="font-size: 0.9em;">Haobin Duan</a>
-                        <sup style="font-size: 0.9em;">1,†</sup>
-                    </p>
-                    <p style="margin: 0;">
-                        <a href="https://scholar.google.com/citations?user=1UD_eBQAAAAJ&hl=en" class="author-link" style="font-size: 0.9em;">Yiqun Zhao</a>
-                        <sup style="font-size: 0.9em;">1,2</sup>
-                    </p>
-                    <p style="margin: 0;">
-                        <a href="https://maikouuu.github.io/" class="author-link" style="font-size: 0.9em;">Zibo Zhao</a>
-                        <sup style="font-size: 0.9em;">3</sup>
-                    </p>
-                    <p style="margin: 0;">
-                        <a href="https://people.eecs.berkeley.edu/~yima/" class="author-link" target="_blank"
-                            style="font-size: 0.9em;">Yi Ma</a>
-                        <sup style="font-size: 0.9em;">1</sup>
-                    </p>
-                    <p style="margin: 0;">
-                        <a href="https://scholar.google.com.sg/citations?user=fe-1v0MAAAAJ&hl=en" class="author-link"
-                            target="_blank" style="font-size: 0.9em;">Shenghua Gao</a>
-                        <sup style="font-size: 0.9em;">1,‡</sup>
-                    </p>
-                </div>
+  </nav>
 
-                <div class="byline-column" style="line-height: 1.2;">
-                    <h3 style="font-size: 1.2em; margin-bottom: 0.2em;">Affiliations</h3>
-                    <p style="margin: 0;">
-                        <sup style="font-size: 0.8em;">1</sup>
-                        <a href="https://www.hku.hk/" class="affiliation-link" target="_blank"
-                            style="font-size: 0.9em;">HKU</a>
-                    </p>
-                    <p style="margin: 0;">
-                        <sup style="font-size: 0.8em;">2</sup>
-                        <span class="affiliation-link" style="font-size: 0.9em;">Transcengram</span>
-                    </p>
-                    <p style="margin: 0;">
-                        <sup style="font-size: 0.8em;">3</sup>
-                        <a href="https://www.tencent.com/" class="affiliation-link" target="_blank"
-                            style="font-size: 0.9em;">Tencent</a>
-                    </p>
-                    <br>
-                    <br>
-                    <br>
-                    <p style="text-align: left; margin: 0; font-size: 0.85em; color: #666;">
-                        <span><sup>†</sup>Equal contribution</span><br>
-                        <span><sup>‡</sup>Corresponding author</span><br>
-                    </p>
-                </div>
+  <!-- ================== TOP PANE (hero + quote share bg) ================== -->
+  <div class="top-pane">
 
-                <div class="byline-column" style="line-height: 1.2;">
-                    <h3 style="font-size: 1.2em; margin-bottom: 0.2em;">Date</h3>
-                    <p style="margin: 0; font-size: 0.95em;">Oct 2025</p>
-                    <!-- <p style="margin: 0; font-size: 0.8em;">
-                        binbinhuang@connect.hku.hk
-                    </p>
-                    <p style="margin: 0; font-size: 0.8em;">
-                        haobinduan@connect.hku.hk
-                    </p>
-                    <p style="margin: 0; font-size: 0.8em;">
-                        yiqun.zhao@connect.hku.hk
-                    </p>
-                    <p style="margin: 0; font-size: 0.8em;">
-                        zibozhao@tencent.com
-                    </p>
-                    <p style="margin: 0; font-size: 0.8em;">
-                        mayi@hku.hk
-                    </p>
-                    <p style="margin: 0; font-size: 0.8em;">
-                        gaosh@hku.hk
-                    </p>
-                    <br> -->
+  <!-- ================== HERO ================== -->
+  <header id="top" class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div>
+          <h1 class="title">
+            Hi-<span class="em">Light</span>
+            <span class="small">A path to high-fidelity, high-resolution video relighting — with a refined evaluation paradigm.</span>
+          </h1>
 
-                    <!-- <p style="text-align: left; margin: 0; font-size: 0.85em; color: #666;">
-                        <span><sup>†</sup>Equal contribution</span><br>
-                        <span><sup>‡</sup>Corresponding author</span><br>
-                    </p> -->
-                </div>
-            </div>
-        </div>
+          <div class="authors">
+            <span class="au">Xiangrui Liu</span><sup>1</sup>,
+            <span class="au">Haoxiang Li</span><sup>2</sup>,
+            <span class="au">Yezhou Yang</span><sup>1</sup>
+          </div>
+          <div class="affil">
+            <sup>1</sup> Arizona State University &nbsp;·&nbsp;
+            <sup>2</sup> Pixocial Technology
+          </div>
 
-
-
-        <!-- Teaser video: placed above the Abstract section -->
-        <div class="teaser-container">
-            <video id="co3d-grid" poster="static/teaser_frame.png" class="teaser-video rounded" autoplay loop muted controls playsinline preload="metadata">
-                <source src="static/teaser_video.mp4" type="video/mp4">
-                Your browser does not support the video tag. <a href="static/teaser_video.mp4">Download the teaser</a>.
-            </video>
-        </div>
-        <div class="teaser-caption">
-            <div class="rounded" style="text-align: center; padding-bottom: 0px; padding-top: 5px;">
-                <div style="text-align: center; color:rgb(0, 0, 0); margin-top: 10px; margin-bottom: 10px;"><strong>TL;DR</strong>: Create <i>canonically posed</i> 3D objects and <i>object-centric cameras</i> from any images in a few forward steps.</div>
-            </div>
-        </div>
-
-
-        <!-- Abstract Section -->
-        <h1 class="text">Abstract</h1>
-        <p class="text abstract">
-        We present Cupid, a new generation-based method for single-image 3D reconstruction. Our approach jointly infers camera pose, 3D shape, and texture by formulating the task as a conditional sampling process within a two-stage flow matching pipeline. This unified framework enables robust pose estimation and achieves state-of-the-art results in both geometric accuracy and visual fidelity.
-        <!-- This work proposes a new generation-based 3D reconstruction method, named <strong>Cupid</strong>, that
-        accurately infers the camera pose, 3D shape, and texture of an object from a single 2D image. Cupid casts 3D
-        reconstruction as a conditional sampling process from a learned distribution of 3D objects, and it jointly
-        generates voxels and pixel-voxel correspondences, enabling robust pose and shape estimation under a unified
-        generative framework. By representing both input camera poses and 3D shape as a distribution in a shared 3D
-        latent space, Cupid adopts a two-stage flow matching pipeline: (1) a coarse stage that produces initial 3D
-        geometry with associated 2D projections for pose recovery; and (2) a refinement stage that integrates
-        pose-aligned image features to enhance structural fidelity and appearance details. Extensive experiments
-        demonstrate Cupid outperforms leading 3D reconstruction methods with an over 3 dB PSNR gain and an over 10%
-        Chamfer Distance reduction, while matching monocular estimators on pose accuracy and delivering superior visual
-        fidelity over baseline 3D generative models. -->
-        </p> 
-
-
-
-        <!-- <div class="icon-row">
-            <a href="#visual-representation" class="icon-link">
-                <img src="static/img/icons/visual.svg" alt="Visual Representation Logo" class="icon">
-                Visual<br>Representations
+          <div class="actions">
+            <a class="btn btn-primary" href="https://github.com/lxrswdd/Hi-Light" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2c-3.2.7-3.87-1.36-3.87-1.36-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.24 3.34.95.1-.74.4-1.24.72-1.53-2.55-.29-5.24-1.27-5.24-5.66 0-1.25.45-2.27 1.18-3.07-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.15 1.17.91-.25 1.89-.38 2.86-.38.97 0 1.95.13 2.86.38 2.18-1.48 3.14-1.17 3.14-1.17.62 1.58.23 2.75.11 3.04.74.8 1.18 1.82 1.18 3.07 0 4.4-2.69 5.36-5.25 5.65.41.35.78 1.05.78 2.12v3.14c0 .31.21.67.8.56 4.56-1.52 7.85-5.83 7.85-10.91C23.5 5.65 18.35.5 12 .5z"/></svg>
+              Code
             </a>
-            <a href="#connector_design" class="icon-link">
-                <img src="static/img/icons/connector.svg" alt="Connector Logo" class="icon">
-                Connector<br>Design
+            <a class="btn btn-ghost" href="#abstract">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg>
+              Paper
             </a>
-            <a href="#instruction_data" class="icon-link">
-                <img src="static/img/icons/data.svg" alt="Data Logo" class="icon">
-                Instruction<br>Data
+            <a class="btn btn-ghost" href="https://github.com/lxrswdd/Hi-Light" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+              Demo
             </a>
-            <a href="#sec:inst_tuning" class="icon-link">
-                <img src="static/img/icons/recipe.svg" alt="Recipe Logo" class="icon">
-                Instruction<br>Recipes
-            </a>
-            <a href="#sec:benchmarking" class="icon-link">
-                <img src="static/img/icons/eval.svg" alt="Eval Logo" class="icon">
-                Evaluation<br>Protocol
-            </a>
+          </div>
         </div>
 
-        <p class="click-hint" style="width: 85%;">
-            <img src="static/img/icons/click.gif" style="width: 1.5rem">
-            <strong>Click to jump to each section.</strong>
-        </p> -->
-        <!-- Embedded YouTube teaser (aligned to site content width) -->
-        <h1 class="text">Video</h1>
-        <div class="iframe-aligned">
-            <div class="embed-wrapper">
-                <iframe src="https://www.youtube.com/embed/S7Bqwg_q4W0" allowfullscreen
-                    style="display:block;" title="Cupid teaser video"></iframe>
-            </div>
+        <div class="hero-visual">
+          <div class="hero-img-frame">
+            <img src="assets/fig1_teaser.jpg" alt="Hi-Light demo: grayscale video relit with sunset and aurora lighting" />
+          </div>
+          <div class="hero-caption">
+            <span class="accent">▸</span> sunset light · green aurora light
+          </div>
         </div>
+      </div>
+    </div>
+  </header>
 
-        <!-- <hr> -->
-        <div id='interactive_demo' class="interactive-demo-block">
-            <div id="sec:interactive_demo" class="sub-section">
-                <h1 class="text">Interactive 3D Visualization</h1>
-                <div class="rerun-container">
-                    <!-- <h3 style="text-align: center;">Interactive Results</h3> -->
-                    <div class="viewer-tip-panel" role="note" aria-label="Viewer tip" style="margin-top:0.6em; margin-bottom:22px; display:flex; justify-content:center;">
-                        <div style="max-width:840px; width:100%; background: #f0f8ff; border-left: 5px solid #7fb4ff; border-radius:10px; padding:12px 16px; box-shadow: 0 4px 12px rgba(66,133,244,0.06);">
-                            <div style="display:flex; gap:12px; align-items:flex-start;">
-                                <!-- camera icon -->
-                                <div aria-hidden="true" style="flex:0 0 36px; display:flex; align-items:center; justify-content:center;">
-                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-                                        <rect x="2" y="6" width="20" height="14" rx="2" fill="#eaf6ff"></rect>
-                                        <path d="M8 6l1.2-2h5.6L16 6" fill="#d9f0ff"></path>
-                                        <circle cx="12" cy="13" r="3" fill="#2b6fb3"></circle>
-                                    </svg>
-                                </div>
-                                <div style="flex:1">
-                                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-                                        <strong style="color:#2b6fb3; font-size:1em;">Tip</strong>
-                                        <span style="font-size:0.92em; color:#485f7a;">How to inspect camera views</span>
-                                    </div>
-                                    <p class="viewer-tip" style="margin:0; color:#23303f; font-size:0.96em; line-height:1.4;">
-                                        Double-click a camera frustum in the scene to jump to that camera's view. Then open the control panel (top-left) and use the <strong>Image Opacity</strong> slider to compare the camera image with the 3D model.
-                                        <br>
-                                        <small style="color:#657789;">Scene / multi-view examples are available at the end of the thumbnail list.</small>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="viewer"></div>
-                    
-                    <div class="rerun-thumbnails" id="rerun-thumbnails">
-                        <!-- Thumbnails will be generated dynamically from recordings -->
-                    </div>
-                    
-                </div>
-            </div>
+  <!-- ================== QUOTE ================== -->
+  <div class="quote-strip">
+    <div class="quote-line reveal">
+      <blockquote><span class="openq">“</span>Lighting is the blank page. It's the canvas. It's the thing that you start with — you can't do anything until you have a light.<span class="closeq">”</span></blockquote>
+    </div>
+    <cite class="quote-cite reveal">Sir Roger Deakins</cite>
+  </div>
 
-            <script type="importmap">
-            {
-                "imports": {
-                    "three": "https://unpkg.com/three@0.158.0/build/three.module.js",
-                    "three/addons/": "https://unpkg.com/three@0.158.0/examples/jsm/"
-                }
-            }
-            </script>
+  </div><!-- /.top-pane -->
 
-            <script type="module">
-                import { initDemoViewer } from './static/js/demo.js';
+  <!-- ================== ABSTRACT ================== -->
+  <section id="abstract" class="block">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="section-num">§ 01 / Abstract</div>
+        <h2 class="section-title">A training-free framework for <span class="em">stable</span>, detailed video relighting.</h2>
+      </div>
 
-                // Build thumbnailList for demo.js
-                const thumbnailList = [
-                    { metadataPath: 'static/results/david-kristianto-woqky4GR2CY-unsplash/metadata.json', thumbnail: 'static/results/david-kristianto-woqky4GR2CY-unsplash/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/maria-kovalets-o9mXWquSfk8-unsplash/metadata.json', thumbnail: 'static/results/maria-kovalets-o9mXWquSfk8-unsplash/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/mike-van-den-bos-NJUuTqckplc-unsplash/metadata.json', thumbnail: 'static/results/mike-van-den-bos-NJUuTqckplc-unsplash/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/muneeb-malhotra-IRGo0Q0-IJc-unsplash/metadata.json', thumbnail: 'static/results/muneeb-malhotra-IRGo0Q0-IJc-unsplash/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/oscar-ivan-esquivel-arteaga-at5-1nW3UCY-unsplash/metadata.json', thumbnail: 'static/results/oscar-ivan-esquivel-arteaga-at5-1nW3UCY-unsplash/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/pexels-benwithlana-lana-498258353-18714943/metadata.json', thumbnail: 'static/results/pexels-benwithlana-lana-498258353-18714943/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/pexels-kindelmedia-9026734/metadata.json', thumbnail: 'static/results/pexels-kindelmedia-9026734/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/nikhil-w5bh67zHnLc-unsplash/metadata.json', thumbnail: 'static/results/nikhil-w5bh67zHnLc-unsplash/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/pexels-berkecanavci-22729433/metadata.json', thumbnail: 'static/results/pexels-berkecanavci-22729433/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/pexels-cigdem-bilgin-2154409770-33844304/metadata.json', thumbnail: 'static/results/pexels-cigdem-bilgin-2154409770-33844304/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/pexels-ds-stories-10216074/metadata.json', thumbnail: 'static/results/pexels-ds-stories-10216074/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/pexels-eugenia-remark-5767088-17959673/metadata.json', thumbnail: 'static/results/pexels-eugenia-remark-5767088-17959673/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/pexels-franck-patras-2414987-7355365/metadata.json', thumbnail: 'static/results/pexels-franck-patras-2414987-7355365/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/pexels-ian-panelo-5786755/metadata.json', thumbnail: 'static/results/pexels-ian-panelo-5786755/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/pexels-kindelmedia-8982660/metadata.json', thumbnail: 'static/results/pexels-kindelmedia-8982660/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/pexels-markus-winkler-1430818-13572265/metadata.json', thumbnail: 'static/results/pexels-markus-winkler-1430818-13572265/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/mrushad-khombhadia-KyHmSJ1GWRQ-unsplash/metadata.json', thumbnail: 'static/results/mrushad-khombhadia-KyHmSJ1GWRQ-unsplash/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/pexels-miggy-rivera-1415514-5665104/metadata.json', thumbnail: 'static/results/pexels-miggy-rivera-1415514-5665104/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/pexels-monstera-13041008/metadata.json', thumbnail: 'static/results/pexels-monstera-13041008/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/pexels-ox-street-3848035-6050916/metadata.json', thumbnail: 'static/results/pexels-ox-street-3848035-6050916/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/pexels-paulseling-12266846/metadata.json', thumbnail: 'static/results/pexels-paulseling-12266846/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/pexels-pavel-danilyuk-6873895/metadata.json', thumbnail: 'static/results/pexels-pavel-danilyuk-6873895/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/pexels-polina-zimmerman-3747562/metadata.json', thumbnail: 'static/results/pexels-polina-zimmerman-3747562/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/pexels-shyam-mishra-31007-9546360/metadata.json', thumbnail: 'static/results/pexels-shyam-mishra-31007-9546360/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/pexels-theshuttervision-11470219/metadata.json', thumbnail: 'static/results/pexels-theshuttervision-11470219/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/aldi-sigun-pmACe385Ruo-unsplash/metadata.json', thumbnail: 'static/results/aldi-sigun-pmACe385Ruo-unsplash/images_crop/input_no_mask.png' },
-                    // { metadataPath: 'static/results/pexels-ox-street-3848035-6050911/metadata.json', thumbnail: 'static/results/pexels-ox-street-3848035-6050911/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/david-kristianto-4_vjBlYl2hY-unsplash/metadata.json', thumbnail: 'static/results/david-kristianto-4_vjBlYl2hY-unsplash/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/simon-lee-U00xWfo5yJA-unsplash/metadata.json', thumbnail: 'static/results/simon-lee-U00xWfo5yJA-unsplash/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/joseph-corl-BRThNnloBoc-unsplash/metadata.json', thumbnail: 'static/results/joseph-corl-BRThNnloBoc-unsplash/images_crop/input_no_mask.png' },
-                    
-                    // animal
-                    { metadataPath: 'static/results/william-warby-4FXlDuwgHWk-unsplash/metadata.json', thumbnail: 'static/results/william-warby-4FXlDuwgHWk-unsplash/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/ruslan-bardash-4kTbAMRAHtQ-unsplash/metadata.json', thumbnail: 'static/results/ruslan-bardash-4kTbAMRAHtQ-unsplash/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/jonnelle-yankovich-MQ4pyvRdXnY-unsplash/metadata.json', thumbnail: 'static/results/jonnelle-yankovich-MQ4pyvRdXnY-unsplash/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/karsten-winegeart-71xbJ_no56g-unsplash/metadata.json', thumbnail: 'static/results/karsten-winegeart-71xbJ_no56g-unsplash/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/devin-woody-C97we177hTs-unsplash/metadata.json', thumbnail: 'static/results/devin-woody-C97we177hTs-unsplash/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/wolfgang-hasselmann-M0K-eR-KYM8-unsplash/metadata.json', thumbnail: 'static/results/wolfgang-hasselmann-M0K-eR-KYM8-unsplash/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/danny-greenberg-8uePGgc54LY-unsplash/metadata.json', thumbnail: 'static/results/danny-greenberg-8uePGgc54LY-unsplash/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/raoul-croes-q4fxCjCj_GI-unsplash/metadata.json', thumbnail: 'static/results/raoul-croes-q4fxCjCj_GI-unsplash/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/dominik-lange-BFsm5vldl2I-unsplash/metadata.json', thumbnail: 'static/results/dominik-lange-BFsm5vldl2I-unsplash/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results/thomas-evans-NVXY8_M1n40-unsplash/metadata.json', thumbnail: 'static/results/thomas-evans-NVXY8_M1n40-unsplash/images_crop/input_no_mask.png' },
-
-                    { metadataPath: 'static/results_scene/pexels-karolina-grabowska-4230630/metadata.json', thumbnail: 'static/results_scene/pexels-karolina-grabowska-4230630/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results_scene/pexels-karolina-grabowska-4464369/metadata.json', thumbnail: 'static/results_scene/pexels-karolina-grabowska-4464369/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results_scene/pexels-karolina-grabowska-7193650/metadata.json', thumbnail: 'static/results_scene/pexels-karolina-grabowska-7193650/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results_scene/pexels-ox-street-3848035-5710082/metadata.json', thumbnail: 'static/results_scene/pexels-ox-street-3848035-5710082/images_crop/input_no_mask.png' },
-                    { metadataPath: 'static/results_mv/unitree/metadata.json', thumbnail: 'static/results_mv/unitree/images_crop/input_no_mask_0.png' },
-                    { metadataPath: 'static/results_mv/chair/metadata.json', thumbnail: 'static/results_mv/chair/images_crop/input_no_mask_0.png' },
-                    { metadataPath: 'static/results_mv/lego/metadata.json', thumbnail: 'static/results_mv/lego/images_crop/input_no_mask_0.png' },
-                    { metadataPath: 'static/results_mv/jimeng-2024-10-22-8493/metadata.json', thumbnail: 'static/results_mv/jimeng-2024-10-22-8493/images_crop/input_no_mask_full.png' },
-                    { metadataPath: 'static/results_mv/jimeng-2025-01-10-9662/metadata.json', thumbnail: 'static/results_mv/jimeng-2025-01-10-9662/images_crop/input_no_mask_full.png' },
-                    { metadataPath: 'static/results_mv/jimeng-2025-01-02-6562/metadata.json', thumbnail: 'static/results_mv/jimeng-2025-01-02-6562/images_crop/input_no_mask_full.png' },
-                    { metadataPath: 'static/results_mv/jimeng-2025-03-10-7566/metadata.json', thumbnail: 'static/results_mv/jimeng-2025-03-10-7566/images_crop/input_no_mask_full.png' },
-
-                ];
-                
-                // Initialize the modular Three.js viewer
-                initDemoViewer({
-                    containerId: 'viewer',
-                    galleryId: 'rerun-thumbnails',
-                    thumbnailList
-                });
-            </script>
+      <div class="abstract-grid reveal">
+        <aside class="abstract-aside">
+          <p><span class="label">Problem</span>Video relighting suffers from light flickering, loss of fine-grained detail, and the absence of a quantitative stability metric.</p>
+          <p><span class="label">Approach</span>Decouple relighting from detail preservation. Project stabilised lighting onto the original high-resolution frames.</p>
+          <p><span class="label">Result</span>+56% SSIM, +80% Light Stability over the second-best method.</p>
+        </aside>
+        <div class="abstract-body">
+          <p>Video relighting offers immense creative potential and commercial value, yet remains hindered by three persistent challenges: severe light <strong>flickering</strong>, the degradation of fine-grained <strong>detail</strong>, and the absence of an adequate <strong>evaluation metric</strong>.</p>
+          <p>We introduce <strong>Hi-Light</strong>, a novel, plug-and-play framework that delivers high-fidelity, high-resolution video relighting through three technical innovations: a <em>lightness-prior anchored</em> guided relighting diffusion that stabilises intermediate relit video, a <em>Hybrid Motion-Adaptive Lighting Smoothing Filter</em> that leverages optical flow to ensure temporal stability without motion blur, and a <em>LAB-based Detail Fusion</em> module that preserves high-frequency information from the original video.</p>
+          <p>To address the evaluation gap, we further propose the <strong>Light Stability Score</strong> — the first quantitative metric designed specifically to measure lighting consistency over time. Hi-Light significantly outperforms state-of-the-art methods in both qualitative and quantitative comparisons, producing stable, highly detailed relit videos.</p>
         </div>
+      </div>
+    </div>
+  </section>
 
-
-        <div id='method' class="vision-block">
-            <div id="sec:method" class="sub-section">
-                <h1 class="text">How Cupid Works?</h1>
-
-                <!-- <p class="text">
-                    Reconstructing a 3D object from a single 2D image is a classic challenge. A key difficulty is determining the camera's viewpoint. Our method, <strong>Cupid</strong>, introduces a novel solution: we don't just generate the 3D object, we <strong>jointly generate the object and its camera pose</strong> at the same time.
-                </p> -->
-                <!-- <h2 class="text">Method Overview</h2> -->
-                <p class="text">
-                    We use a powerful generative technique called Flow Model<d-cite
-                        key="lipman2022flow"></d-cite>. This model learns to transform random noise into a voxelized 3D representation, guided by the input image. To make this process efficient and effective, we break it down into two main stages<d-cite
-                        key="xiang2025structured"></d-cite>, as shown in <a href="#fig-method">Figure 1</a>.
-                </p>
-
-                <d-figure id="fig-method">
-                    <figure>
-                        <img data-zoomable="" draggable="false" src="static/img/method.png" alt="Overview of the Cupid method.">
-                        <figcaption>
-                            <strong>Figure 1: Overview of Cupid.</strong> Our two-stage process first generates a coarse shape and a novel "UV cube" to determine the camera pose. This pose then guides a second stage to generate high-fidelity geometry and appearance.
-                        </figcaption>
-                    </figure>
-                </d-figure>
-                
-                <p class="text">
-                    <strong>Stage 1: Occupancy and Pose Generation. </strong>  
-                    The first stage generates a coarse representation of the object and simultaneously estimates the camera pose. Given an input image, our flow model produces two key outputs: an occupancy cube (indicating which voxels $\mathbf{x}_i$ in space belong to the object) and a novel UV cube (indicating the 2D pixel locations $\mathbf{u}_i$ for each 3D voxel).
-                    we can robustly solve for the camera's projection matrix $\mathbf{P}^{*}$ using a classical least-squares solver<d-cite
-                        key="abdel2015direct"></d-cite>.
-                </p>
-                <p class="text" style="text-align: center;">
-                    $$
-                    \mathbf{P}^{*} = \argmin_{\mathbf{P}} \sum_{i} \big\Vert\pi(\mathbf{P},\mathbf{x}_i) - \mathbf{u}_i\big\Vert^2. \tag{1}
-                    $$
-                </p>
-
-                <p class="text">
-                    <strong>Stage 2: Pose-Aligned Geometry and Appearance Generation. </strong>
-                    With the camera pose now known, the second stage generates the fine-grained geometry and appearance. A common problem here is "color drift" and "detail inconsistency", where the 3D model doesn't perfectly match the input image's colors and details. We solve this with a <strong>pose-aligned conditioner</strong> that inject pixel-wise information.
-                </p>
-                <p class="text">
-                    For each voxel in the occupancy cube, we use the calculated pose to find exactly where it lands on the 2D input image. We then sample features (both high-level semantics from DINO and low-level color/texture) from that precise pixel location. These pixel-aligned features are injected directly into the generation process, ensuring the final 3D model has high-fidelity geometry and appearance that is faithful to the input view.
-                </p>
-                
-
-                <h2 class="text">Extension 1: Composing Components for Full Scene Reconstruction</h2>
-                <p class="text">
-                    Our framework naturally extends to reconstructing entire scenes. We use an object detector (like SAM) to find all objects in an image. Then, we run our reconstruction process on each object independently.
-                    Then, using the 3D-2D correspondences our method provides, we align each reconstructed object with a global depth prior (from a model like MoGe<d-cite
-                        key="wang2025moge"></d-cite>). This allows us to solve for each object's correct scale and position, composing them into a single, coherent 3D scene.
-                </p>
-                
-                <d-figure id="fig-scene">
-                    <figure>
-                        <img data-zoomable="" draggable="false" src="static/img/scene.png" alt="Component-aligned scene reconstruction.">
-                        <figcaption>
-                            <strong>Figure 2: Component-Aligned Scene reconstruction.</strong> By reconstructing each object and then solving for its similarity transformation, we can accurately compose complex 3D scenes.
-                        </figcaption>
-                    </figure>
-                </d-figure>
-                
-                <h2 class="text">Extension 2: Multi-view Reconstruction</h2>
-                <p class="text">
-                    Although <strong>Cupid</strong> is trained with single image condition, it can be easily extended to multi-view reconstruction, thanks to the flexibility of our generative framework.
-                    Given multiple images of the same object from different angles, we know that the 3D object cube should be the same across all views.
-                    Therefore, we can run our flow model for each image, but share the same occupancy latent $\mathbf{X}$ across all views during the iterative flow sampling. This is similar to MultiDiffusion<d-cite
-                        key="bar2023multidiffusion"></d-cite> (which average the overlapped pixel regions in 2D during iterative sampling), but in the 3D space. 
-                </p>
-
-                <d-figure id="fig-multiview">
-                    <figure>
-                        <img data-zoomable="" draggable="false" src="static/img/multiview.png" alt="Multi-view conditioning results">
-                        <figcaption>
-                            <strong>Figure 3: Multi-view conditioning.</strong> When multiple input views are available, we fuse the shared, view-agnostic object latent across flow paths (similar to MultiDiffusion<d-cite key="bar2023multidiffusion"></d-cite>), enabling camera, geometry and texture refinement across all images. <em>Top</em>: inputs; <em>Middle</em>: reconstructed 3D object and camera poses; <em>Bottom</em>: rendered images and geometry.
-                        </figcaption>
-                    </figure>
-                </d-figure>
-            </div>
+  <!-- ================== TEASER COMPARISON ================== -->
+  <section class="block" style="padding-top:0;">
+    <div class="container">
+      <figure class="figure reveal">
+        <div class="figure-frame">
+          <img src="assets/fig2_capcut.jpg" alt="Comparison between CapCut filters and Hi-Light relighting from a grayscale input" loading="lazy" />
         </div>
-    </d-article>
+        <figcaption>
+          <span class="fignum">Fig. 02</span>
+          Traditional filters (centre) recolour the scene globally — they cannot synthesize directionality, highlights, or new shadows. Hi-Light (right) projects a physically grounded sunset onto the same input.
+        </figcaption>
+      </figure>
+    </div>
+  </section>
 
+  <!-- ================== STATS ================== -->
+  <section class="block" style="padding-top: 0;">
+    <div class="container">
+      <div class="stats-row reveal">
+        <div class="stat">
+          <div class="stat-num">+56<span class="unit">%</span></div>
+          <div class="stat-label">SSIM gain</div>
+          <div class="stat-sub">vs. second-best on detail preservation</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">+80<span class="unit">%</span></div>
+          <div class="stat-label">S<sub>LS</sub> gain</div>
+          <div class="stat-sub">vs. second-best on light stability</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">2160<span class="unit">p</span></div>
+          <div class="stat-label">resolution</div>
+          <div class="stat-sub">only method that scales to 4K input</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">0<span class="unit"> training</span></div>
+          <div class="stat-label">data-free</div>
+          <div class="stat-sub">backbone-agnostic, plug-and-play</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <!-- ================== CONTRIBUTIONS ================== -->
+  <section class="block">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="section-num">§ 02 / Contributions</div>
+        <h2 class="section-title">What's <span class="em">new</span>.</h2>
+      </div>
 
-    <d-appendix>
-        <h3>BibTeX</h3>
-        <p class="bibtex">
-            @article{huang2025cupid,<br>
-                title={CUPID: Generative 3D Reconstruction via Joint Object and Pose Modeling},<br>
-                author={Huang, Binbin and Duan, Haobin and Zhao, Yiqun and Zhao, Zibo and Ma, Yi and Gao, Shenghua},<br>
-                journal={arXiv preprint arXiv:2510.20776},<br>
-                year={2025}<br>
-                }
-        </p>
+      <div class="contrib-grid reveal">
+        <div class="contrib-card">
+          <div class="contrib-num"><span class="dot"></span> Contribution 01</div>
+          <h3 class="contrib-name">A <span class="em">training-free</span>, backbone-agnostic framework</h3>
+          <p class="contrib-text">The only method capable of processing high-resolution video on a single GPU, extending accessibility to a wider community of users without specialised hardware or paired-light datasets.</p>
+        </div>
+        <div class="contrib-card">
+          <div class="contrib-num"><span class="dot"></span> Contribution 02</div>
+          <h3 class="contrib-name">Two plug-and-play stabilisation modules</h3>
+          <p class="contrib-text">A lightness-prior–anchored progressive fusion scheme paired with <code>HMA-LSF</code> (flicker removal) and <code>LAB-DF</code> (texture restoration). Drop-in to any video diffusion backbone.</p>
+        </div>
+        <div class="contrib-card">
+          <div class="contrib-num"><span class="dot"></span> Contribution 03</div>
+          <h3 class="contrib-name">A principled <span class="em">evaluation</span> paradigm</h3>
+          <p class="contrib-text">The <code>Light Stability Score</code> — the first quantitative metric for lighting consistency — complements standard fidelity metrics, with 95.6% rank-1 agreement against a 30-rater blind human study.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        <d-footnote-list></d-footnote-list>
-        <d-citation-list></d-citation-list>
+  <!-- ================== METHOD ================== -->
+  <section id="method" class="block">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="section-num">§ 03 / Method</div>
+        <div>
+          <h2 class="section-title">Three modules, <span class="em">one</span> coherent pipeline.</h2>
+          <p class="section-lede">Hi-Light decouples the problem: generate stable lighting on a downsampled latent, then project it back onto the high-resolution source. Each module surgically targets one failure mode of existing SOTA.</p>
+        </div>
+      </div>
 
-        <h3>Acknowledgement</h3>
-        <p>
-            We thank <a href="https://www.sainingxie.com/" target="_blank">NYU VisionX</a> for the nice project page template.
-        </p>
-    </d-appendix>
-    <!-- bibliography will be inlined during Distill pipeline's pre-rendering -->
-    <d-bibliography src="bibliography.bib"></d-bibliography>
-    <!-- <script src="./static/js/nav-bar.js"></script> -->
+      <figure class="figure reveal">
+        <div class="figure-frame">
+          <img src="assets/fig3_framework.jpg" alt="The Hi-Light framework: guided relighting diffusion, HMA-LSF, and LAB-DF" loading="lazy" />
+        </div>
+        <figcaption>
+          <span class="fignum">Fig. 03</span>
+          Overall architecture. The downsampled video passes through a guided relighting diffusion loop anchored by a lightness prior; the intermediate output is stabilised by HMA-LSF; LAB-DF then transfers the stabilised illumination onto the high-resolution source.
+        </figcaption>
+      </figure>
+
+      <div class="steps reveal" style="margin-top: 70px;">
+        <div class="step">
+          <div class="step-tag">▸ Step 01</div>
+          <h4>Lightness-prior anchored diffusion</h4>
+          <p>A static, DC-insensitive residual extracted from the input's L channel is injected at every diffusion step (γ = 0.3), damping low-to-mid-frequency luminance oscillations without drifting global brightness.</p>
+        </div>
+        <div class="step">
+          <div class="step-tag">▸ Step 02</div>
+          <h4>HMA-LSF — Hybrid smoothing</h4>
+          <p>An optical-flow-aware motion-adaptive blend (Farneback, CPU-only) cancels flicker on stable regions while a bilateral filter removes residual compression noise — without smearing fast-moving objects.</p>
+        </div>
+        <div class="step">
+          <div class="step-tag">▸ Step 03</div>
+          <h4>LAB Detail-Preserve Fusion</h4>
+          <p>Inverts the transfer: the input's L carries the detail, only the <em>low-frequency</em> illumination from the relit L is added back. The relit chroma (A, B) preserves the new colour. No afterimages.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== METHOD FIG 4 ================== -->
+  <section class="block" style="padding-top:0;">
+    <div class="container">
+      <figure class="figure reveal">
+        <div class="figure-frame">
+          <img src="assets/fig4_labdf.jpg" alt="LAB feature maps and the LAB-DF detail preservation strategy" loading="lazy" />
+        </div>
+        <figcaption>
+          <span class="fignum">Fig. 04</span>
+          LAB-DF fuses high-frequency detail from the input video with low-frequency illumination from the intermediate relit video, recombined with relit chroma to retain the new colour and tonal style.
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ================== RESULTS ================== -->
+  <section id="results" class="block">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="section-num">§ 04 / Results</div>
+        <div>
+          <h2 class="section-title">A new <span class="em">SOTA</span> across every metric.</h2>
+          <p class="section-lede">Evaluated on 100 clips spanning 1080p–2160p, 81 frames at 24 fps, indoor / outdoor, static / dynamic, portrait / environment. Hyperparameters fixed across all comparisons.</p>
+        </div>
+      </div>
+
+      <figure class="figure reveal" style="margin-bottom: 60px;">
+        <div class="figure-frame">
+          <img src="assets/fig5_qualitative.jpg" alt="Qualitative comparison: TC-Light, LAV (AnimateDiff/CogVideoX/Wan), Hi-Light" loading="lazy" />
+        </div>
+        <figcaption>
+          <span class="fignum">Fig. 05</span>
+          Qualitative comparison under the prompt <em>"sunset lighting"</em>. TC-Light produces a washed-out look; LAV variants smear textures on the building and foliage. Hi-Light renders sharp highlights while preserving the original high-frequency detail.
+        </figcaption>
+      </figure>
+
+      <div class="results-grid reveal">
+        <div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>SSIM ↑</th>
+                  <th>LPIPS ↓</th>
+                  <th>FID ↓</th>
+                  <th>VBench ↑</th>
+                  <th>S<sub>LS</sub> ↑</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="label">TC-Light</td><td>0.484</td><td>0.464</td><td>120</td><td>0.718</td><td>0.281</td></tr>
+                <tr><td class="label">LAV (AnimateDiff)</td><td>0.552</td><td>0.434</td><td>241</td><td>0.714</td><td>0.098</td></tr>
+                <tr><td class="label">LAV (CogVideoX)</td><td>0.597</td><td>0.402</td><td>133</td><td>0.736</td><td>0.267</td></tr>
+                <tr><td class="label">LAV (Wan)</td><td>0.604</td><td>0.395</td><td>135</td><td>0.728</td><td>0.279</td></tr>
+                <tr class="best">
+                  <td class="label">Hi-Light <span class="winner-mark">★</span></td>
+                  <td>0.943</td>
+                  <td>0.247</td>
+                  <td>76</td>
+                  <td>0.736</td>
+                  <td>0.509</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-foot">Table 01 · Quantified comparison against open-source SOTA. Hi-Light achieves the best score on every metric — the largest margin appearing on SSIM (+56%) and Light Stability (+80%).</p>
+        </div>
+        <figure class="figure">
+          <div class="figure-frame">
+            <img src="assets/fig6_plot.jpg" alt="Performance scatter: SSIM vs Light Stability Score" loading="lazy" />
+          </div>
+          <figcaption>
+            <span class="fignum">Fig. 06</span>
+            Hi-Light occupies the top-right quadrant — high detail fidelity <em>and</em> robust lighting stability — and sits closest to the input video, the ideal target.
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== FREQUENCY / TEMPORAL ================== -->
+  <section class="block" style="padding-top:0;">
+    <div class="container">
+      <figure class="figure reveal">
+        <div class="figure-frame">
+          <img src="assets/fig7_frequency.jpg" alt="Frequency-domain spectra and per-frame brightness traces" loading="lazy" />
+        </div>
+        <figcaption>
+          <span class="fignum">Fig. 07</span>
+          <strong style="color:var(--ink);font-style:normal;">Left:</strong> Fourier magnitude spectra. Hi-Light's spectrum is nearly indistinguishable from the input — the others show a pronounced attenuation of high-frequency content, a quantitative signature of detail loss.
+          <strong style="color:var(--ink);font-style:normal;">Right:</strong> per-frame brightness traces. Competitors exhibit erratic flicker; Hi-Light maintains a smooth, stable profile.
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ================== CITE ================== -->
+  <section id="cite" class="block">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="section-num">§ 05 / Citation</div>
+        <h2 class="section-title">If you find this useful…</h2>
+      </div>
+
+      <div class="reveal" style="position:relative;">
+        <div class="bibtex" id="bibtex"><span class="key">@inproceedings</span>{liu2026hilight,
+  <span class="field">title</span>     = <span class="val">{Hi-Light: A Path to High-fidelity, High-resolution Video Relighting With A Refined Evaluation Paradigm}</span>,
+  <span class="field">author</span>    = <span class="val">{Liu, Xiangrui and Li, Haoxiang and Yang, Yezhou}</span>,
+  <span class="field">booktitle</span> = <span class="val">{Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}</span>,
+  <span class="field">year</span>      = <span class="val">{2026}</span>
+}</div>
+        <button class="copy-btn" id="copyBtn" aria-label="Copy BibTeX">Copy</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== FOOTER ================== -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-note">
+          <p>Code, weights, and demos: <a href="https://github.com/lxrswdd/Hi-Light" target="_blank" rel="noopener">github.com/lxrswdd/Hi-Light</a></p>
+          <p style="margin-top: 8px;">Page template by the authors. Site assets are figures from the paper.</p>
+        </div>
+        <div class="footer-mark">— Hi-Light, 2026 —</div>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  // Reveal-on-scroll
+  (function () {
+    if (!('IntersectionObserver' in window)) {
+      document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+  })();
+
+  // Quote: split into per-word spans and reveal sequentially
+  (function () {
+    var bq = document.querySelector('.quote-strip blockquote');
+    if (!bq) return;
+
+    var openq = bq.querySelector('.openq');
+    var closeq = bq.querySelector('.closeq');
+
+    // walk text nodes that aren't inside the open/close-quote spans
+    var textNodes = [];
+    var walker = document.createTreeWalker(bq, NodeFilter.SHOW_TEXT, null, false);
+    var n;
+    while ((n = walker.nextNode())) {
+      if (n.parentElement === openq || n.parentElement === closeq) continue;
+      textNodes.push(n);
+    }
+
+    var stagger      = 0.16; // seconds between word entrances
+    var initial      = 0.10; // initial pause before first word
+    var entranceDur  = 0.85; // matches opacity transition duration
+    var holdAfter    = 0.45; // pause after last word before color cascade
+    var colorStagger = 0.06; // seconds between word color shifts
+    var i = 0;
+
+    textNodes.forEach(function (tn) {
+      var parts = tn.textContent.split(/(\s+)/);
+      var frag = document.createDocumentFragment();
+      parts.forEach(function (p) {
+        if (p.length === 0) return;
+        if (/^\s+$/.test(p)) {
+          frag.appendChild(document.createTextNode(p));
+        } else {
+          var span = document.createElement('span');
+          span.className = 'word';
+          span.style.setProperty('--d',  (initial + i * stagger).toFixed(3) + 's');
+          span.style.setProperty('--cd', (i * colorStagger).toFixed(3) + 's');
+          span.textContent = p;
+          frag.appendChild(span);
+          i++;
+        }
+      });
+      tn.parentNode.replaceChild(frag, tn);
+    });
+
+    if (openq) openq.style.setProperty('--d', '0s');
+    if (closeq) closeq.style.setProperty('--d', (initial + i * stagger + 0.05).toFixed(3) + 's');
+
+    var lastEntranceMs = (initial + Math.max(0, i - 1) * stagger + entranceDur + holdAfter) * 1000;
+
+    function start() {
+      bq.classList.add('play');
+      setTimeout(function () { bq.classList.add('shine'); }, lastEntranceMs);
+    }
+
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            start();
+            io.unobserve(bq);
+          }
+        });
+      }, { rootMargin: '0px 0px -10% 0px', threshold: 0.1 });
+      io.observe(bq);
+    } else {
+      start();
+    }
+  })();
+
+  // Copy BibTeX
+  (function () {
+    var btn = document.getElementById('copyBtn');
+    var src = document.getElementById('bibtex');
+    if (!btn || !src) return;
+    btn.addEventListener('click', function () {
+      var txt = src.innerText;
+      navigator.clipboard.writeText(txt).then(function () {
+        btn.classList.add('done');
+        var orig = btn.textContent;
+        btn.textContent = 'Copied ✓';
+        setTimeout(function () {
+          btn.classList.remove('done');
+          btn.textContent = orig;
+        }, 1800);
+      });
+    });
+  })();
+</script>
+
 </body>
 </html>
