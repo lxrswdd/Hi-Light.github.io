@@ -482,7 +482,7 @@
     /* Quote strip beneath hero */
     .quote-strip {
       position: relative;
-      padding: 70px 0 50px;
+      padding: 130px 0 90px;
       border-bottom: 1px solid var(--line);
       background: transparent;
       overflow: hidden;
@@ -601,7 +601,7 @@
 
     .quote-cite {
       display: block;
-      margin-top: 90px;        /* leaves room for the absolutely-positioned hint */
+      margin-top: 22px;        /* sits close under the quote — the hint lives at the left, cite stays centered */
       padding: 0 max(20px, 4vw);
       text-align: center;
       font-family: var(--font-mono);
@@ -1203,7 +1203,7 @@
   </div><!-- /.top-pane -->
 
   <!-- ================== ABSTRACT ================== -->
-  <section id="abstract" class="block">
+  <section id="abstract" class="block" style="padding-top: clamp(120px, 14vw, 200px);">
     <div class="container">
       <div class="section-head reveal">
         <div class="section-num">§ 01 / Abstract</div>
