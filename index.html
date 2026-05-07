@@ -454,23 +454,50 @@
     .quote-strip blockquote .openq { margin-right: 0.18em; }
     .quote-strip blockquote .closeq { margin-left: 0.08em; }
 
-    /* per-word reveal animation + secondary color cascade */
+    /* per-word reveal animation */
     .quote-strip blockquote .word {
       display: inline-block;
       opacity: 0;
       transform: translateY(0.35em);
       transition:
         opacity .85s ease-out var(--d, 0s),
-        transform 1s cubic-bezier(.2,.7,.2,1) var(--d, 0s),
-        color .9s ease-out var(--cd, 0s);
+        transform 1s cubic-bezier(.2,.7,.2,1) var(--d, 0s);
       will-change: opacity, transform, color;
     }
     .quote-strip blockquote.play .word {
       opacity: 1;
       transform: none;
     }
+
+    /* Secondary "moving light" sweep — each word lights up quickly,
+       then fades back slowly, so the lit head is followed by a
+       trailing tail of ~5 dimming words. Asymmetric easing is encoded
+       in the keyframe positions; animation easing is linear so the
+       shape is preserved. */
+    @keyframes wordShine {
+      0% {
+        color: var(--ink);
+        text-shadow: none;
+      }
+      14% {
+        color: var(--amber);
+        text-shadow:
+          0 0 14px rgba(232,150,87,0.65),
+          0 0 30px rgba(232,150,87,0.30);
+      }
+      24% {
+        color: var(--amber);
+        text-shadow:
+          0 0 14px rgba(232,150,87,0.55),
+          0 0 28px rgba(232,150,87,0.25);
+      }
+      100% {
+        color: var(--ink);
+        text-shadow: none;
+      }
+    }
     .quote-strip blockquote.shine .word {
-      color: var(--amber);
+      animation: wordShine 1.3s linear var(--cd, 0s) both;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -480,6 +507,7 @@
         opacity: 1;
         transform: none;
         transition: none;
+        animation: none;
       }
       .quote-strip blockquote .openq,
       .quote-strip blockquote .closeq { opacity: 0.55; }
@@ -526,13 +554,55 @@
       display: flex;
       align-items: center;
       gap: 14px;
+      animation: sectionGlow 4s ease-in-out infinite;
     }
     .section-num::after {
       content: "";
       flex: 1;
-      height: 1px;
+      height: 2px;
       background: linear-gradient(90deg, var(--amber), transparent);
-      max-width: 120px;
+      max-width: 140px;
+      box-shadow:
+        0 0 12px rgba(245,180,113,0.8),
+        0 0 28px rgba(232,150,87,0.5),
+        0 0 50px rgba(232,150,87,0.3);
+      animation: sectionGlowLine 4s ease-in-out infinite;
+    }
+
+    @keyframes sectionGlowLine {
+      0%, 100% {
+        box-shadow:
+          0 0 10px rgba(245,180,113,0.6),
+          0 0 22px rgba(232,150,87,0.35);
+      }
+      50% {
+        box-shadow:
+          0 0 16px rgba(255,225,180,0.95),
+          0 0 38px rgba(245,180,113,0.7),
+          0 0 80px rgba(232,150,87,0.45);
+      }
+    }
+
+    @keyframes sectionGlow {
+      0%, 100% {
+        color: var(--amber);
+        text-shadow:
+          0 0 10px rgba(245,180,113,0.85),
+          0 0 22px rgba(232,150,87,0.55),
+          0 0 44px rgba(232,150,87,0.32);
+      }
+      50% {
+        color: #ffd9a8;
+        text-shadow:
+          0 0 14px rgba(255,225,180,1),
+          0 0 32px rgba(245,180,113,0.95),
+          0 0 70px rgba(232,150,87,0.75),
+          0 0 120px rgba(232,150,87,0.45),
+          0 0 180px rgba(232,150,87,0.25);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .section-num { animation: none; }
     }
     .section-title {
       font-family: var(--font-display);
@@ -592,19 +662,31 @@
       font-style: italic;
     }
 
-    /* Figure cards */
+    /* Figure cards — warm parchment mat over the dark theme,
+       so paper-figure whites integrate with the warm palette */
     .figure {
       margin: 0;
     }
     .figure-frame {
       position: relative;
+      padding: 14px;
       border-radius: var(--r-md);
       overflow: hidden;
-      background: var(--bg-card);
-      border: 1px solid var(--line-strong);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      background:
+        radial-gradient(ellipse at 50% 0%, #f3e9d6 0%, #e8dcc4 100%);
+      border: 1px solid rgba(232,150,87,0.18);
+      box-shadow:
+        0 24px 60px rgba(0,0,0,0.55),
+        0 0 0 1px rgba(0,0,0,0.25),
+        inset 0 1px 0 rgba(255,255,255,0.5);
     }
-    .figure-frame img { width: 100%; height: auto; display: block; }
+    .figure-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 6px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+    }
     figcaption {
       margin-top: 18px;
       font-size: 17px;
@@ -1334,8 +1416,8 @@
     var stagger      = 0.16; // seconds between word entrances
     var initial      = 0.10; // initial pause before first word
     var entranceDur  = 0.85; // matches opacity transition duration
-    var holdAfter    = 0.45; // pause after last word before color cascade
-    var colorStagger = 0.06; // seconds between word color shifts
+    var holdAfter    = 0;    // start the light-sweep as soon as the last word lands
+    var colorStagger = 0.22; // seconds between word color shifts (≈ animation_duration / 2.5)
     var i = 0;
 
     textNodes.forEach(function (tn) {
