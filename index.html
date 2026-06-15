@@ -137,8 +137,8 @@
       inset: 0;
       pointer-events: none;
       background:
-        radial-gradient(ellipse 80% 60% at 80% 0%, rgba(232, 150, 87, 0.10), transparent 60%),
-        radial-gradient(ellipse 60% 40% at 0% 30%, rgba(193, 75, 52, 0.06), transparent 60%),
+        radial-gradient(ellipse 80% 60% at 80% 0%, rgba(232, 150, 87, 0.06), transparent 60%),
+        radial-gradient(ellipse 60% 40% at 0% 30%, rgba(193, 75, 52, 0.04), transparent 60%),
         radial-gradient(ellipse 50% 80% at 50% 100%, rgba(90, 141, 143, 0.05), transparent 60%);
       z-index: 0;
     }
@@ -266,8 +266,8 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse 70% 55% at 30% 40%, rgba(13,10,8,0.55), transparent 70%),
-        linear-gradient(180deg, rgba(13,10,8,0.10) 0%, rgba(13,10,8,0.20) 60%, transparent 100%);
+        radial-gradient(ellipse 70% 55% at 30% 40%, rgba(13,10,8,0.72), rgba(13,10,8,0.34) 70%, transparent 100%),
+        linear-gradient(180deg, rgba(13,10,8,0.36) 0%, rgba(13,10,8,0.42) 60%, rgba(13,10,8,0.16) 100%);
       z-index: -1;
       pointer-events: none;
     }
@@ -312,7 +312,7 @@
       font-size: clamp(48px, 9vw, 120px);
       line-height: 0.95;
       letter-spacing: -0.035em;
-      color: var(--ink-mute);
+      color: var(--ink);
       font-variation-settings: "opsz" 144, "SOFT" 30;
     }
     h1.title .em {
@@ -442,14 +442,16 @@
       content: "";
       position: absolute;
       inset: -40px;
-      background: radial-gradient(ellipse at center, rgba(232,150,87,0.18), transparent 60%);
+      background: radial-gradient(ellipse at center, rgba(232,150,87,0.10), transparent 60%);
       filter: blur(40px);
       z-index: 0;
     }
     .hero-img-frame {
       position: relative;
       z-index: 1;
-      width: 100%;
+      width: fit-content;
+      max-width: 100%;
+      margin: 0 auto;
       border-radius: var(--r-md);
       overflow: hidden;
       box-shadow:
@@ -461,24 +463,12 @@
       height: auto;
       display: block;
     }
-    .hero-caption {
-      position: absolute;
-      bottom: -18px;
-      left: 18px;
-      z-index: 2;
-      padding: 10px 16px;
-      background: var(--bg-card);
-      border: 1px solid var(--line-strong);
-      border-radius: var(--r-md);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--ink-mute);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+    .hero-img-frame video {
+      width: auto;
+      max-width: 100%;
+      height: min(640px, 72vh);
+      display: block;
     }
-    .hero-caption .accent { color: var(--amber); }
-
     /* Quote strip beneath hero */
     .quote-strip {
       position: relative;
@@ -1190,10 +1180,16 @@
 
         <div class="hero-visual">
           <div class="hero-img-frame">
-            <img src="assets/fig1_teaser.jpg" alt="Hi-Light demo: grayscale video relit with sunset and aurora lighting" />
-          </div>
-          <div class="hero-caption">
-            <span class="accent">▸</span> sunset light · green aurora light
+            <video
+              src="assets/demo480p.mp4"
+              poster="assets/fig1_teaser.jpg"
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              aria-label="Hi-Light demo video: grayscale video relit with sunset and aurora lighting"
+            ></video>
           </div>
         </div>
       </div>
